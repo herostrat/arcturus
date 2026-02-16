@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { getHealth } from "./api/client.js";
+import { getHealth } from "./api/client";
 
 const EMPTY_STATUS = {
   status: "unknown",
@@ -22,7 +22,7 @@ export default function App() {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err.message);
+          setError((err as Error).message);
         }
       }
     }

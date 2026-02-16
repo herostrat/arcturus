@@ -18,7 +18,7 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Paths filter
         id: filter
         uses: dorny/paths-filter@v3
@@ -36,9 +36,9 @@ jobs:
     if: github.event_name == 'push' || needs.changes.outputs.backend == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Install dependencies
@@ -55,13 +55,13 @@ jobs:
     if: github.event_name == 'push' || needs.changes.outputs.frontend == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
           cache: 'npm'
@@ -72,12 +72,18 @@ jobs:
           pip install -r backend/requirements.txt
       - name: Install frontend deps
         working-directory: frontend
-        run: npm ci
+        run: npm ci --legacy-peer-deps
       - name: Generate API types
         working-directory: frontend
         run: npm run gen:api
       - name: Verify generated files are up to date
         run: git diff --exit-code
+      - name: Type check
+        working-directory: frontend
+        run: npm run typecheck
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
       - name: Build frontend
         working-directory: frontend
         run: npm run build
@@ -88,7 +94,7 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Build image
         run: |
           docker build -t arcturus:ci .
