@@ -46,7 +46,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r backend/requirements.txt
       - name: Export OpenAPI
-        run: python backend/scripts/export_openapi.py
+        working-directory: backend
+        run: python scripts/export_openapi.py
 
   frontend-checks:
     name: Frontend checks

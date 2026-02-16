@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "gen:api": "python ../backend/scripts/export_openapi.py && openapi-typescript ../backend/openapi.generated.json -o src/api/schema.generated.d.ts",
+    "gen:api": "cd ../backend && python scripts/export_openapi.py && cd - && openapi-typescript ../backend/openapi.generated.json -o src/api/schema.generated.d.ts",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
