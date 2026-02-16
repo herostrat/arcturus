@@ -1,0 +1,22 @@
+files = "/data/styles/styles-generated"
+
+[server]
+host = "0.0.0.0"
+port = 8081
+cors_origins = ["*"]
+public_url = "http://localhost:8081"
+
+[[sources]]
+id = "gebco_pm"
+type = "pmtiles"
+path = "/data/charts/gebco.pmtiles"
+name = "GEBCO"
+attribution = "GEBCO"
+
+[[styles]]
+id = "nautical-day"
+path = "/data/styles/styles-generated/nautical-day.json"
+
+[[styles]]
+id = "nautical-night"
+path = "/data/styles/styles-generated/nautical-night.json"
