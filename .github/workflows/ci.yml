@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint · Typecheck · Test · Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          # Keep in sync with packageManager field in root package.json
+          version: 10.30.3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Turborepo caches task outputs in .turbo/
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ github.sha }}
+          restore-keys: turbo-
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Codegen
+        run: pnpm codegen
+
+      - name: Assert generated files are committed
+        # Fails if codegen produces a diff – developer forgot to commit generated output
+        run: |
+          git diff --exit-code packages/contracts/generated/ \
+            || (echo "Generated files are out of date. Run 'pnpm codegen' and commit the result." && exit 1)
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build

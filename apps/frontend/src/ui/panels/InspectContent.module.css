@@ -1,0 +1,49 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.coordRow,
+.layerRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  min-width: 28px;
+}
+
+.value {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--color-text-primary);
+  margin-right: 8px;
+}
+
+.propTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.propKey {
+  color: var(--color-text-secondary);
+  padding: 2px 8px 2px 0;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.propVal {
+  color: var(--color-text-primary);
+  font-family: monospace;
+  word-break: break-all;
+}

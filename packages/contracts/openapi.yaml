@@ -1,0 +1,414 @@
+openapi: "3.1.0"
+
+info:
+  title: Arcturus Backend API
+  version: "1.0.0"
+  description: |
+    Offline-first chartplotter hub API.
+    All mutating endpoints accept and return full entity objects (client-generated IDs and revisions).
+    Error responses follow RFC 7807 (application/problem+json).
+
+servers:
+  - url: /api/v1
+    description: Backend REST API (v1)
+
+paths:
+  /system/status:
+    get:
+      operationId: getSystemStatus
+      summary: Backend health and connectivity status
+      tags: [system]
+      responses:
+        "200":
+          description: Current system status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemStatus"
+
+  /waypoints:
+    get:
+      operationId: listWaypoints
+      summary: List all waypoints (including soft-deleted for sync)
+      tags: [waypoints]
+      parameters:
+        - $ref: "#/components/parameters/IncludeDeleted"
+      responses:
+        "200":
+          description: List of waypoints
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Waypoint"
+    post:
+      operationId: upsertWaypoint
+      summary: Create or update a waypoint (client-generated ID)
+      tags: [waypoints]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Waypoint"
+      responses:
+        "200":
+          description: Waypoint stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Waypoint"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /waypoints/{id}:
+    parameters:
+      - $ref: "#/components/parameters/EntityId"
+    get:
+      operationId: getWaypoint
+      summary: Get a single waypoint by ID
+      tags: [waypoints]
+      responses:
+        "200":
+          description: Waypoint found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Waypoint"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateWaypoint
+      summary: Replace a waypoint (full entity, client manages revision)
+      tags: [waypoints]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Waypoint"
+      responses:
+        "200":
+          description: Waypoint updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Waypoint"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+    delete:
+      operationId: deleteWaypoint
+      summary: Soft-delete a waypoint (sets deletedAt)
+      tags: [waypoints]
+      responses:
+        "200":
+          description: Waypoint soft-deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Waypoint"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /routes:
+    get:
+      operationId: listRoutes
+      summary: List all routes (including soft-deleted for sync)
+      tags: [routes]
+      parameters:
+        - $ref: "#/components/parameters/IncludeDeleted"
+      responses:
+        "200":
+          description: List of routes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Route"
+    post:
+      operationId: upsertRoute
+      summary: Create or update a route (client-generated ID)
+      tags: [routes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Route"
+      responses:
+        "200":
+          description: Route stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Route"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /routes/{id}:
+    parameters:
+      - $ref: "#/components/parameters/EntityId"
+    get:
+      operationId: getRoute
+      summary: Get a single route by ID
+      tags: [routes]
+      responses:
+        "200":
+          description: Route found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Route"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: updateRoute
+      summary: Replace a route (full entity, client manages revision)
+      tags: [routes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Route"
+      responses:
+        "200":
+          description: Route updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Route"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+    delete:
+      operationId: deleteRoute
+      summary: Soft-delete a route (sets deletedAt)
+      tags: [routes]
+      responses:
+        "200":
+          description: Route soft-deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Route"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /sync/manifest:
+    get:
+      operationId: getSyncManifest
+      summary: Get revision map for all entities (for client-side diff computation)
+      tags: [sync]
+      responses:
+        "200":
+          description: Revision manifest
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncManifest"
+
+  /sync/push:
+    post:
+      operationId: syncPush
+      summary: Push local changes to backend (batch upsert with LWW conflict detection)
+      tags: [sync]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncPushRequest"
+      responses:
+        "200":
+          description: Push result with accepted IDs and any conflicts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncPushResponse"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /sync/pull:
+    get:
+      operationId: syncPull
+      summary: Pull changes from backend since a given revision
+      tags: [sync]
+      parameters:
+        - name: since
+          in: query
+          required: false
+          schema:
+            type: string
+          description: |
+            ULID revision. Returns all entities with revision > this value.
+            Omit to pull all entities.
+      responses:
+        "200":
+          description: Changed entities since the given revision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncPullResponse"
+
+components:
+  parameters:
+    EntityId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Entity ULID
+
+    IncludeDeleted:
+      name: includeDeleted
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: Include soft-deleted entities in response
+
+  schemas:
+    Waypoint:
+      $ref: "./schemas/waypoint.schema.json"
+
+    Route:
+      $ref: "./schemas/route.schema.json"
+
+    SystemStatus:
+      $ref: "./schemas/system-status.schema.json"
+
+    Problem:
+      description: RFC 7807 Problem Details
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+
+    SyncManifest:
+      description: Map of entity IDs to their current revision on the server.
+      type: object
+      required: [waypoints, routes]
+      additionalProperties: false
+      properties:
+        waypoints:
+          type: object
+          additionalProperties:
+            type: string
+          description: "{ [id: ULID]: revision: ULID }"
+        routes:
+          type: object
+          additionalProperties:
+            type: string
+          description: "{ [id: ULID]: revision: ULID }"
+
+    SyncPushRequest:
+      type: object
+      required: [waypoints, routes]
+      additionalProperties: false
+      properties:
+        waypoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Waypoint"
+        routes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Route"
+
+    SyncConflict:
+      description: A LWW conflict where server revision is newer than what client sent.
+      type: object
+      required: [id, entityType, serverRevision, clientRevision]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        entityType:
+          type: string
+          enum: [waypoint, route]
+        serverRevision:
+          type: string
+        clientRevision:
+          type: string
+
+    SyncPushResponse:
+      type: object
+      required: [accepted, conflicts]
+      additionalProperties: false
+      properties:
+        accepted:
+          type: array
+          items:
+            type: string
+          description: IDs of successfully applied entities
+        conflicts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SyncConflict"
+
+    SyncPullResponse:
+      type: object
+      required: [waypoints, routes, since]
+      additionalProperties: false
+      properties:
+        waypoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/Waypoint"
+          description: Changed waypoints (includes soft-deleted; check deletedAt)
+        routes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Route"
+          description: Changed routes (includes soft-deleted; check deletedAt)
+        since:
+          type: string
+          description: The 'since' value used for this pull (echo back for client tracking)
+
+  responses:
+    NotFound:
+      description: Entity not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+    Conflict:
+      description: Revision conflict – server has a newer revision
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+
+    UnprocessableEntity:
+      description: Validation error
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"

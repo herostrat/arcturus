@@ -1,0 +1,94 @@
+asyncapi: "3.0.0"
+
+info:
+  title: Arcturus WebSocket API
+  version: "1.0.0"
+  description: |
+    Real-time event stream from the backend hub.
+    All messages share a common envelope with type, timestamp, sequence, and payload.
+
+servers:
+  backend:
+    host: "localhost:3000"
+    pathname: /ws
+    protocol: ws
+    description: Backend WebSocket stream
+
+channels:
+  health:
+    address: health.system
+    description: Periodic system health broadcast (every ~10 seconds)
+    messages:
+      healthMessage:
+        $ref: "#/components/messages/HealthMessage"
+
+operations:
+  receiveHealth:
+    action: receive
+    channel:
+      $ref: "#/channels/health"
+    summary: Receive system health updates
+    messages:
+      - $ref: "#/channels/health/messages/healthMessage"
+
+components:
+  messages:
+    HealthMessage:
+      name: HealthMessage
+      title: System Health Broadcast
+      summary: Periodic broadcast of backend and connected services health
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/WsEnvelope_HealthPayload"
+
+  schemas:
+    WsEnvelope_HealthPayload:
+      description: WebSocket message envelope for health.system topic
+      type: object
+      required: [type, ts, seq, payload]
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: health.system
+        ts:
+          type: string
+          format: date-time
+          description: Server timestamp when message was sent
+        seq:
+          type: integer
+          minimum: 0
+          description: Monotonically increasing per connection
+        payload:
+          $ref: "#/components/schemas/HealthPayload"
+
+    HealthPayload:
+      type: object
+      required: [status, uptimeSeconds, chartserver, signalk, warnings]
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, error]
+          description: Overall backend health
+        uptimeSeconds:
+          type: number
+          description: Backend process uptime in seconds
+        chartserver:
+          type: object
+          required: [reachable]
+          properties:
+            reachable:
+              type: boolean
+        signalk:
+          type: object
+          required: [reachable]
+          properties:
+            reachable:
+              type: boolean
+            lastMessageAgeSeconds:
+              type: number
+        warnings:
+          type: array
+          items:
+            type: string

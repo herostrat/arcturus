@@ -1,0 +1,42 @@
+:root {
+  --topbar-height: 48px;
+  --panel-min-width: 180px;
+  --panel-default-width: 280px;
+  --resize-handle-width: 5px;
+
+  /* Placeholder palette – will be replaced by OBD6 design tokens */
+  --color-bg: #0a0a1a;
+  --color-surface: #12122a;
+  --color-surface-raised: #1a1a38;
+  --color-surface-hover: #1e1e40;
+  --color-surface-active: #24244a;
+  --color-border: #2a2a4a;
+  --color-text: #e0e0f0;
+  --color-text-primary: #e0e0f0;
+  --color-text-secondary: #7070a0;
+  --color-text-muted: #7070a0;
+  --color-accent: #3a7bd5;
+  --color-status-ok: #2ecc71;
+  --color-status-warn: #f39c12;
+  --color-status-error: #e74c3c;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Nunito Sans', system-ui, sans-serif;
+  font-size: 14px;
+}

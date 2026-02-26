@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.turbo/
+*.tsbuildinfo
+coverage/
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code
+.claude/
+
+# Markdown docs (not committed to repo)
+*.md

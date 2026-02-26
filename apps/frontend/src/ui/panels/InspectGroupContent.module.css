@@ -1,0 +1,52 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.coords {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.empty {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sourceLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.itemList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-left: 8px;
+}
+
+.item {
+  font-size: 12px;
+  color: var(--color-text-primary);
+  padding: 1px 0;
+}
+
+.item::before {
+  content: '›';
+  color: var(--color-text-secondary);
+  margin-right: 5px;
+}

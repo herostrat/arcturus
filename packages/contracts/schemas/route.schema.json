@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arcturus:schema:route",
+  "title": "Route",
+  "description": "An ordered sequence of waypoints forming a navigation route.",
+  "type": "object",
+  "required": ["id", "name", "waypointIds", "createdAt", "updatedAt", "revision", "originClientId"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ULID – client-generated, globally unique"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "waypointIds": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered list of Waypoint IDs (ULIDs). Duplicates allowed (e.g. return-to-start)."
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "properties": {
+      "type": "object",
+      "description": "Arbitrary metadata (e.g. estimated duration, fuel, tags).",
+      "additionalProperties": true
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deletedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Soft delete timestamp. Present means logically deleted."
+    },
+    "revision": {
+      "type": "string",
+      "description": "ULID – monotonically increasing. Last-Write-Wins sync uses lexicographic comparison."
+    },
+    "originClientId": {
+      "type": "string",
+      "description": "ULID of the client that last modified this entity"
+    }
+  }
+}

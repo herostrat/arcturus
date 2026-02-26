@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arcturus:schema:system-status",
+  "title": "SystemStatus",
+  "description": "Backend health and connectivity status snapshot.",
+  "type": "object",
+  "required": ["version", "timestamp", "chartserver", "signalk", "warnings"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Backend application version"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time the status was generated"
+    },
+    "chartserver": {
+      "type": "object",
+      "required": ["reachable"],
+      "additionalProperties": false,
+      "properties": {
+        "reachable": { "type": "boolean" },
+        "url": { "type": "string" },
+        "lastCheckAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "signalk": {
+      "type": "object",
+      "required": ["reachable"],
+      "additionalProperties": false,
+      "properties": {
+        "reachable": { "type": "boolean" },
+        "url": { "type": "string" },
+        "lastMessageAgeSeconds": { "type": "number" },
+        "lastCheckAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Human-readable warnings (e.g. 'Chartserver unreachable')"
+    }
+  }
+}

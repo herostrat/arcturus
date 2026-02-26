@@ -1,0 +1,41 @@
+.appName {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  color: var(--color-text);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.statusItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotOk {
+  background: var(--color-status-ok);
+}
+
+.dotWarn {
+  background: var(--color-status-warn);
+}
+
+.dotError {
+  background: var(--color-status-error);
+}
+
+.statusLabel {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}

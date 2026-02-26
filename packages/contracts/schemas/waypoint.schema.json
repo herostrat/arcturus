@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arcturus:schema:waypoint",
+  "title": "Waypoint",
+  "description": "A named geographic point used in route planning.",
+  "type": "object",
+  "required": ["id", "name", "lat", "lon", "createdAt", "updatedAt", "revision", "originClientId"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ULID – client-generated, globally unique"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "lat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "lon": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "deletedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Soft delete timestamp. Present means logically deleted."
+    },
+    "revision": {
+      "type": "string",
+      "description": "ULID – monotonically increasing. Last-Write-Wins sync uses lexicographic comparison."
+    },
+    "originClientId": {
+      "type": "string",
+      "description": "ULID of the client that last modified this entity"
+    }
+  }
+}

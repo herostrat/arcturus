@@ -1,0 +1,20 @@
+{
+  "name": "@arcturus/backend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'TODO: dev server (Phase 4)'",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\" --pass-on-no-patterns",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@arcturus/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

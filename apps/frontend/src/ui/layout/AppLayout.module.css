@@ -1,0 +1,50 @@
+.root {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TopBar floats over the map – does not reduce map height */
+.topBarOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+/* Body fills remaining space, lays out map + panel side by side */
+.body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Map area: fills available width; children position absolute inside */
+.mapArea {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Overlay layer: covers the map area, pointer-events disabled by default */
+.overlayLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.overlayLayer > * {
+  pointer-events: auto;
+}
+
+/* Panel area: natural sidebar width, handled by InstrumentPanel */
+.panelArea {
+  position: relative;
+  flex-shrink: 0;
+}
